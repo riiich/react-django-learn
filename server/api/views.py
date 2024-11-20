@@ -39,10 +39,9 @@ class NoteDelete(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
+        user = self.request.user
+
+        return Note.objects.filter(author=user)
 
 # CreateAPIView - used for create-only endpoints 
 # THIS IS DEFAULT, unlike the NoteListCreate class above where the methods are being overridden (queryset, create method)
