@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializers, NoteSerializers
+from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note
 
@@ -17,7 +17,7 @@ from .models import Note
 
 # ListCreateAPIView - used for read-write endpoints to represent a collection of model instances (provides GET and POST method handlers)
 class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializers      # used for validating and deserializing input, and for serializing output
+    serializer_class = NoteSerializer      # used for validating and deserializing input, and for serializing output
     permission_classes = [IsAuthenticated]
 
     # overriding the queryset in order to 
@@ -35,10 +35,10 @@ class NoteListCreate(generics.ListCreateAPIView):
 
 # DestoryAPIView - used for delete-only endpoints for a single model instance (provides a DELETE method handler)
 class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializers
+    serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self, serializer):
+    def get_queryset(self):
         user = self.request.user
 
         return Note.objects.filter(author=user)
@@ -47,5 +47,5 @@ class NoteDelete(generics.DestroyAPIView):
 # THIS IS DEFAULT, unlike the NoteListCreate class above where the methods are being overridden (queryset, create method)
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()           # select data from database
-    serializer_class = UserSerializers      # convert python object to json object to use for response  
-    permission_classes = [AllowAny]         
+    serializer_class = UserSerializer      # convert python object to json object to use for response  
+    permission_classes = [AllowAny]        
